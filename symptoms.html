@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Health Symptom Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #8EC5FC, #E0C3FC);
+            background-size: 200% 200%;
+            text-align: center;
+            animation: gradientAnimation 6s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #4a4a4a;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #4a4a4a;
+            font-size: 16px;
+        }
+
+        .question div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .question input[type="radio"],
+        .question input[type="checkbox"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .question label {
+            margin-left: 5px;
+            font-weight: 600;
+            color: #4a4a4a;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            background-color: #f4f4f4;
+            font-size: 16px;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn {
+            background-color: #ccc;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #008CBA, #43e97b);
+            color: white;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #38f9d7, #43e97b);
+            color: white;
+        }
+
+        .navigation {
+            margin-top: 20px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #43e97b;
+            box-shadow: 0 0 5px rgba(67, 233, 123, 0.5);
+            outline: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+                margin: 10px;
+            }
+
+            textarea {
+                width: calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Breast Health Symptom Checker</h2>
+    <form id="symptomForm">
+        <div id="questionContainer" class="question">
+        </div>
+        <div class="navigation">
+            <button type="button" class="prev-btn" onclick="prevQuestion()">Previous</button>
+            <button type="button" class="next-btn" onclick="nextQuestion()">Next</button>
+            <button type="submit" class="submit-btn" style="display:none;">Submit</button>
+            <button type="button" class="submit-button" onclick="window.location.href='/home';">Back to Home</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const symptoms = [
+        { question: "Do you have a lump in your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you experience pain in your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you noticed any changes in the shape or size of your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you have nipple discharge?", type: "radio", options: ["Yes", "No"] },
+        { question: "Are there any changes in the skin of your breast?", type: "checkbox", options: ["Redness", "Dimpling", "Scaling", "Puckering"] },
+        { question: "Is the lump in your breast movable?", type: "radio", options: ["Yes", "No"] },
+        { question: "Is the lump in your breast hard or soft?", type: "radio", options: ["Hard", "Soft"] },
+        { question: "Is the lump in your breast painless?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you have swelling in your armpit?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you experience any dimpling or puckering of the skin on your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Is there any retraction or inversion of the nipple?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you experience any unexplained weight loss?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you have any persistent redness or rash on the breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you noticed any changes in the veins on the surface of your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you experienced any recent or sudden changes in the appearance of your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you experience any unusual warmth or tenderness in your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you had any recent injuries or trauma to your breast?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you have a family history of breast cancer?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you had any previous breast conditions or surgeries?", type: "radio", options: ["Yes", "No"] },
+        { question: "Do you experience persistent fatigue or lethargy?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you noticed any changes in the size or shape of both breasts (asymmetry)?", type: "radio", options: ["Yes", "No"] },
+        { question: "Are you experiencing any unexplained fever or night sweats?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you experienced any sudden or unexplained changes in your overall health?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you noticed any scaling or flaking of the nipple?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you experienced any unexplained changes in your menstrual cycle or hormonal balance?", type: "radio", options: ["Yes", "No"] },
+        { question: "Have you had a recent mammogram or ultrasound? If so, what were the findings?", type: "textarea" }
+    ];
+
+    let currentQuestion = 0;
+
+    function loadQuestion(index) {
+        const question = symptoms[index];
+        const container = document.getElementById('questionContainer');
+        container.innerHTML = `<label for="question${index}">${index + 1}. ${question.question}</label>`;
+
+        if (question.type === 'radio' || question.type === 'checkbox') {
+            question.options.forEach(option => {
+                container.innerHTML += `
+                    <div>
+                        <input type="${question.type}" id="option${index}${option}" name="question${index}" value="${option}" aria-label="${option}">
+                        <label for="option${index}${option}">${option}</label>
+                    </div>`;
+            });
+        } else if (question.type === 'textarea') {
+            container.innerHTML += `
+                <div>
+                    <textarea id="question${index}" name="question${index}" rows="4" cols="50" aria-label="${question.question}"></textarea>
+                </div>`;
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < symptoms.length - 1) {
+            currentQuestion++;
+            loadQuestion(currentQuestion);
+        }
+        toggleButtons();
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion(currentQuestion);
+        }
+        toggleButtons();
+    }
+
+    function toggleButtons() {
+        document.querySelector('.prev-btn').style.display = currentQuestion === 0 ? 'none' : 'inline-block';
+        document.querySelector('.next-btn').style.display = currentQuestion === symptoms.length - 1 ? 'none' : 'inline-block';
+        document.querySelector('.submit-btn').style.display = currentQuestion === symptoms.length - 1 ? 'inline-block' : 'none';
+    }
+
+    document.getElementById('symptomForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('formFeedback').style.display = 'block';
+    });
+
+    loadQuestion(currentQuestion);
+    toggleButtons();
+</script>
+
+</body>
+</html>
